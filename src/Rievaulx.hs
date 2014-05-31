@@ -44,6 +44,16 @@ contains (Node v lt ct rt _) s@(x:xs)
   | x > v = contains rt s
   | otherwise = contains ct xs
 
+getPrefixTree :: (Ord a) => TernaryTree a -> [a] -> Maybe (TernaryTree a)
+getPrefixTree EmptyNode _ = Nothing
+getPrefixTree t@(Node v _ _ _ _) (x:[])
+  | v == x = Just t
+  | otherwise = Nothing
+getPrefixTree (Node v lt ct rt _) s@(x:xs)
+  | x < v = getPrefixTree lt s
+  | x > v = getPrefixTree rt s
+  | otherwise = getPrefixTree ct xs
+
 --
 -- Printing
 --
