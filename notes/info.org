@@ -1,0 +1,6 @@
+* http://igoro.com/archive/efficient-auto-complete-with-a-ternary-search-tree/
+* http://techpanacea.blogspot.co.uk/2011/01/ternary-search-trees.html
+* https://code.google.com/p/tstdb/
+* https://www.lsi.upc.edu/~ps/downloads/tst/tst.html
+* http://www.geeksforgeeks.org/ternary-search-tree/
+* http://c.learncodethehardway.org/book/ex46.html
