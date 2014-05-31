@@ -36,6 +36,13 @@ insertMany = foldl' (flip insert) EmptyNode
 -- Lookups
 --
 
+--prefixFold :: (Ord a) => (TernaryTree a -> b -> b) -> b -> TernaryTree a -> [a] -> b
+--prefixFold f acc t@(Node _ _ _ _ _) (_:[])= f t acc
+--prefixFold f acc t@(Node v lt ct rt _) s@(x:xs)
+--  | x < v = prefixFold f acc lt s
+--  | x > v = prefixFold f acc rt s
+--  | otherwise = prefixFold f (f t acc) ct xs
+
 contains :: (Ord a) => TernaryTree a -> [a] -> Bool
 contains EmptyNode _ = False
 contains (Node v _ _ _ e) (x:[]) = e && v == x
@@ -53,6 +60,18 @@ getPrefixTree (Node v lt ct rt _) s@(x:xs)
   | x < v = getPrefixTree lt s
   | x > v = getPrefixTree rt s
   | otherwise = getPrefixTree ct xs
+
+collect :: (Ord a) => TernaryTree a -> [a] -> [[a]]
+collect EmptyNode _ = []
+collect (Node v lt ct rt e) run = (collect lt run) ++ termRun ++ (collect ct currRun) ++ (collect rt run)
+  where currRun = run ++ [v]
+        termRun = if e then [currRun] else []
+
+prefixTerms :: (Ord a) => TernaryTree a -> [a] -> [[a]]
+prefixTerms _ [] = []
+prefixTerms t p = case getPrefixTree t p of
+  Nothing -> []
+  Just prefixTree -> collect prefixTree $ init p
 
 --
 -- Printing
