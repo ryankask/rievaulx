@@ -18,9 +18,9 @@ data TernaryTree a = EmptyNode
 --
 
 leaf :: a -> Bool -> TernaryTree a
-leaf x e = Node x EmptyNode EmptyNode EmptyNode e
+leaf x = Node x EmptyNode EmptyNode EmptyNode
 
-insert :: (Ord a) => [a] => TernaryTree a => TernaryTree a
+insert :: (Ord a) => [a] -> TernaryTree a -> TernaryTree a
 insert [] t = t
 insert (x:[]) EmptyNode = leaf x True
 insert (x:xs) EmptyNode = Node x EmptyNode (insert xs EmptyNode) EmptyNode False
