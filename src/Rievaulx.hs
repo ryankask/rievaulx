@@ -63,7 +63,8 @@ getPrefixTree (Node v lt ct rt _) s@(x:xs)
 
 collect :: (Ord a) => TernaryTree a -> [a] -> [[a]]
 collect EmptyNode _ = []
-collect (Node v lt ct rt e) run = (collect lt run) ++ termRun ++ (collect ct currRun) ++ (collect rt run)
+collect (Node v lt ct rt e) run =
+  (collect lt run) ++ termRun ++ (collect ct currRun) ++ (collect rt run)
   where currRun = run ++ [v]
         termRun = if e then [currRun] else []
 
