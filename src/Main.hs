@@ -1,4 +1,3 @@
-import Rievaulx.Web (application)
-import Network.Wai.Handler.Warp (run)
+import Rievaulx.Web (runServer)
 
-main = run 3000 application
+main = runServer
