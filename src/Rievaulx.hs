@@ -24,10 +24,10 @@ insert :: (Ord a) => [a] -> TernaryTree a -> TernaryTree a
 insert [] t = t
 insert (x:[]) EmptyNode = leaf x True
 insert (x:xs) EmptyNode = Node x EmptyNode (insert xs EmptyNode) EmptyNode False
-insert s@(x:xs) (Node v lt ct rt e)
-  | x < v = Node v (insert s lt) ct rt e
-  | x > v = Node v lt ct (insert s rt) e
-  | otherwise = Node v lt (insert xs ct) rt e
+insert s@(x:xs) (Node v lt ct rt e) = case compare x v of
+  LT -> Node v (insert s lt) ct rt e
+  GT -> Node v lt ct (insert s rt) e
+  _  -> Node v lt (insert xs ct) rt e
 
 insertMany :: (Ord a) => [[a]] -> TernaryTree a
 insertMany = foldl' (flip insert) EmptyNode
@@ -46,20 +46,20 @@ insertMany = foldl' (flip insert) EmptyNode
 contains :: (Ord a) => TernaryTree a -> [a] -> Bool
 contains EmptyNode _ = False
 contains (Node v _ _ _ e) (x:[]) = e && v == x
-contains (Node v lt ct rt _) s@(x:xs)
-  | x < v = contains lt s
-  | x > v = contains rt s
-  | otherwise = contains ct xs
+contains (Node v lt ct rt _) s@(x:xs) = case compare x v of
+  LT -> contains lt s
+  GT -> contains rt s
+  _  -> contains ct xs
 
 getPrefixTree :: (Ord a) => TernaryTree a -> [a] -> Maybe (TernaryTree a)
 getPrefixTree EmptyNode _ = Nothing
 getPrefixTree _ [] = Nothing
-getPrefixTree (Node v lt ct rt _) s@(x:xs)
-  | x < v = getPrefixTree lt s
-  | x > v = getPrefixTree rt s
-  | otherwise = if length xs == 0
-                then Just ct
-                else getPrefixTree ct xs
+getPrefixTree (Node v lt ct rt _) s@(x:xs) = case compare x v of
+  LT -> getPrefixTree lt s
+  GT -> getPrefixTree rt s
+  _  -> if length xs == 0
+        then Just ct
+        else getPrefixTree ct xs
 
 collect :: (Ord a) => TernaryTree a -> [a] -> [[a]]
 collect EmptyNode _ = []
