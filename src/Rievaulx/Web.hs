@@ -30,7 +30,7 @@ staticMiddleware = staticPolicy $ addBase "./public"
 
 runServer :: IO ()
 runServer = do
-  words <- getRandomizedWords "/usr/share/dict/web2"
+  words <- getRandomizedWords "/usr/share/dict/words"
   let completionCandidates = insertMany words
   putStrLn $ "Rievaulx is starting on http://localhost:3000/ ..."
   run 3000 $ staticMiddleware $ createApp completionCandidates
