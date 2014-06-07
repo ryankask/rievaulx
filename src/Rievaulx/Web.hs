@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, DeriveDataTypeable #-}
 
 module Rievaulx.Web
        ( runServer
@@ -12,6 +12,7 @@ import           Network.Wai.Handler.Warp (run)
 import           Network.Wai.Middleware.Static (staticPolicy, addBase)
 import           Rievaulx (TernaryTree, insertMany, prefixTerms)
 import           Rievaulx.Sources (getRandomizedWords)
+import           System.Console.CmdArgs (Data, Typeable, (&=), typ, help, program, cmdArgs)
 
 notFound :: Response
 notFound = responseLBS status404 [("Content-Type", "text/html")]
@@ -27,9 +28,25 @@ createApp tree = application
 staticMiddleware :: Middleware
 staticMiddleware = staticPolicy $ addBase "./public"
 
+port :: Int
+port = 3000
+
 runServer :: IO ()
 runServer = do
-  words <- getRandomizedWords "/usr/share/dict/words"
+  opts <- cmdArgs options
+  let filename = wordsFile opts
+  words <- getRandomizedWords filename
   let completionCandidates = insertMany words
-  putStrLn $ "Rievaulx is starting on http://localhost:3000/ ..."
-  run 3000 $ staticMiddleware $ createApp completionCandidates
+  putStrLn $ "Rievaulx is serving \"" ++ filename ++ "\" on http://localhost:" ++ show port ++ "/ ..."
+  run port $ staticMiddleware $ createApp completionCandidates
+
+data Options = Options
+               { wordsFile :: String
+               } deriving (Show, Data, Typeable)
+
+options :: Options
+options = Options { wordsFile = "/usr/share/dict/words"
+                             &= typ "FILE"
+                             &= help "A file containing a list of words to use"
+                  }
+          &= program "rievaulx"
