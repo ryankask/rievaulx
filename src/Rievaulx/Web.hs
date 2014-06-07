@@ -4,9 +4,8 @@ module Rievaulx.Web
        ( runServer
        ) where
 
+import qualified Data.Aeson as Aeson
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as LT
-import qualified Data.Text.Lazy.Encoding as LE
 import           Network.HTTP.Types (status200, status404)
 import           Network.Wai
 import           Network.Wai.Handler.Warp (run)
@@ -21,8 +20,8 @@ notFound = responseLBS status404 [("Content-Type", "text/html")]
 createApp :: TernaryTree Char -> Application
 createApp tree = application
   where application req = return $ case pathInfo req of
-          (_:word:[]) -> responseLBS status200 [("Content-Type", "text/html")]
-                         (LE.encodeUtf8 . LT.pack . show . prefixTerms tree $ T.unpack word)
+          (_:word:[]) -> responseLBS status200 [("Content-Type", "application/json")]
+                         (Aeson.encode . prefixTerms tree $ T.unpack word)
           _ -> notFound
 
 staticMiddleware :: Middleware
